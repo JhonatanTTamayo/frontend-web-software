@@ -1,58 +1,51 @@
-import React, { useEffect, useState } from "react";
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Auth } from "../../../api/auth";
-import {
-  Autocomplete,
-  IconButton,
-  InputAdornment,
-  OutlinedInput,
-  TextField,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import "./SignUp.scss";
 
-export const SignUp = () => {
+function Copyright(props) {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+      {'Copyright © '}
+      <Link color="inherit" href="">
+        UAM
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+const defaultTheme  = createTheme();
+
+export const SignUp = () =>  {
+
   const auth = new Auth();
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  //   useEffect se ejecuta 1 sola vez cuando se cargue el componente
-  useEffect(() => {
-    console.log("signup");
-  }, []);
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = (event) => {
+  // Enviar los datos del formulario
+  const handleSubmit = async (event) => {
     event.preventDefault();
-  };
-
-  const handleSetFirstname = (event) => {
-    setFirstname(event.target.value);
-  };
-
-  const handleSetLastname = (event) => {
-    setLastname(event.target.value);
-  };
-
-  const handleSave = async () => {
-    const data = {
-      firstname: firstname,
-      lastname: lastname,
-      email,
-      currentPassword,
-    };
-    console.log(data);
-    try {
-      const response = await auth.signUp(data);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get('email'),
+      password: data.get('password'),
+    });
+    // try {
+    //   const response = await auth.signUp(data);
+    //   console.log(response);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   const documentTypeOptions = [
@@ -63,66 +56,95 @@ export const SignUp = () => {
   ];
 
   return (
-    <>
-      <div>
-        <h2>SignUp</h2>
-        <div className="auth-container">
-          <form>
-            <div className="auth-form">
-              <div className="auth-form__row">
+    <ThemeProvider theme={defaultTheme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign up
+          </Typography>
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
                 <TextField
-                  className="input-auth-form"
-                  id="firstname"
-                  value={firstname}
-                  label="Firstname"
-                  variant="standard"
-                  onChange={handleSetFirstname}
+                  autoComplete="given-name"
+                  name="firstName"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  autoFocus
                 />
+              </Grid>
+              <Grid item xs={12} sm={6}>
                 <TextField
-                  className="input-auth-form"
-                  id="lastname"
-                  value={lastname}
-                  label="Lastname"
-                  variant="standard"
-                  onChange={handleSetLastname}
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  autoComplete="family-name"
                 />
-              </div>
-              <div className="auth-form__row">
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  options={documentTypeOptions}
-                  sx={{ width: 300 }}
-                  // open={false}
-                  renderInput={(params) => (
-                    <TextField {...params} label="DocumentType" />
-                  )}
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
                 />
-              </div>
-              <div className="auth-form__row">
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={showPassword ? "text" : "password"}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
                   label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
                 />
-              </div>
-            </div>
-          </form>
-          <button onClick={handleSave}>Enviar</button>
-        </div>
-      </div>
-    </>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControlLabel
+                  control={<Checkbox value="allowExtraEmails" color="primary" />}
+                  label="I want to receive inspiration, marketing promotions and updates via email."
+                />
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign Up
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="#" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+        <Copyright sx={{ mt: 5 }} />
+      </Container>
+    </ThemeProvider>
   );
-};
+}
+
+
