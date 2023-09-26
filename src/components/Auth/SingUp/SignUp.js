@@ -14,6 +14,22 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Auth } from "../../../api/auth";
 
+//Dialog
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
+// Toast
+import Snackbar from '@mui/material/Snackbar';
+import Alert  from '@mui/material/Alert';
+import { useState } from 'react';
+
+// function Alert(props) {
+//   return <MuiAlert elevation={6} variant="filled" {...props} />;
+// }
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -30,9 +46,15 @@ function Copyright(props) {
 const defaultTheme  = createTheme();
 
 export const SignUp = () =>  {
+  // const [password, setPassword] = useState('');
+  // const [repeatPassword, setRepeatPassword] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [open, setOpen] = React.useState(false);
 
+  const [userDecision, setUserDecision] = useState(null);
   const auth = new Auth();
-  // Enviar los datos del formulario
+
+  // Enviar los datos del formulario  
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -40,12 +62,41 @@ export const SignUp = () =>  {
       email: data.get('email'),
       password: data.get('password'),
     });
-    // try {
-    //   const response = await auth.signUp(data);
-    //   console.log(response);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+
+    if (data.get('password') !== data.get('repeatPassword')) {
+      // Mostrar un Snackbar si las contraseñas no coinciden
+      setOpenSnackbar(true);
+    } else {
+      // Aquí puedes enviar los datos del formulario si las contraseñas coinciden
+      // Por ejemplo, puedes hacer una solicitud HTTP para registrar al usuario
+      console.log('Contraseñas coinciden, puedes enviar el formulario.');
+    }
+
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };  
+
+  const handleAgree = () => {
+    setUserDecision('agree');
+    setOpen(false);
+  };
+
+  const handleDisagree = () => {
+    setUserDecision('disagree');
+    setOpen(false);
   };
 
   const documentTypeOptions = [
@@ -75,28 +126,8 @@ export const SignUp = () =>  {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
-              <Grid item xs={12}>
+              
+            <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
@@ -115,15 +146,128 @@ export const SignUp = () =>  {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  // value={password}
+                  // onChange={(e) => setPassword(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                <TextField
+                  required
+                  fullWidth
+                  name="repeatPassword"
+                  label="Repeat Password"
+                  type="password"
+                  id="repeatPassword"
+                  autoComplete="new-password"
+                  // value={repeatPassword}
+                  // onChange={(e) => setRepeatPassword(e.target.value)}
                 />
               </Grid>
+              <Grid item xs={12}>
+              <Grid item>
+                <Link href="#" variant="body2" onClick = {handleClickOpen}>
+                  Términos y condiciones
+                </Link>
+              </Grid>
+  
+              </Grid>
+              {/* Dialog */}
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"Términos y Condiciones de Uso"}
+                </DialogTitle>
+                <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+              
+                  <Typography gutterBottom>
+                    Por favor, lee detenidamente los siguientes términos y condiciones 
+                    antes de utilizar nuestro sitio web. Al acceder y utilizar este sitio web, 
+                    aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con 
+                    alguno de los siguientes puntos, te recomendamos que no utilices nuestro sitio web.
+                  </Typography>
+
+                  <Typography gutterBottom>
+                    1. Uso del Sitio Web 
+                  </Typography>
+                    El contenido de este sitio web es únicamente para información general y 
+                    puede estar sujeto a cambios sin previo aviso. No garantizamos la exactitud, 
+                    integridad o actualidad de la información proporcionada en este sitio web.
+
+                    <Typography gutterBottom>
+                    1.1 El uso de cualquier información o material en este sitio web es bajo tu propio riesgo. 
+                    Es tu responsabilidad asegurarte de que cualquier producto, servicio o información disponible 
+                    a través de este sitio web cumpla con tus requisitos específicos.
+                    </Typography>
+                  <Typography gutterBottom>
+                    1.2 Este sitio web puede contener enlaces a otros sitios web que no están bajo nuestro control. 
+                    No tenemos control sobre la naturaleza, el contenido y la disponibilidad de esos sitios. 
+                    La inclusión de cualquier enlace no implica necesariamente una recomendación o respaldo 
+                    de los puntos de vista expresados en ellos.
+                  </Typography>
+
+                  <Typography gutterBottom>
+                  2. Propiedad intelectual
+                  </Typography>
+                    2.1. Todos los derechos de propiedad intelectual en relación con este sitio web y su contenido
+                    (incluyendo, pero no limitado a, texto, gráficos, logotipos, imágenes y software) 
+                    son propiedad de SENNOVALAB o de nuestros licenciantes. Estos están protegidos por 
+                    las leyes de propiedad intelectual aplicables.
+
+                  <Typography gutterBottom>
+                    2.2. Está prohibida cualquier reproducción, distribución, modificación o uso no autorizado del 
+                    contenido de este sitio web sin nuestro consentimiento previo por escrito.
+                    Está prohibida cualquier reproducción, distribución, modificación o uso no autorizado 
+                    del contenido de este sitio web sin nuestro consentimiento previo por escrito.
+
+                  <Typography gutterBottom>
+                  3. Privacidad y Protección de Datos
+                  </Typography>
+                    3.1.La recopilación y el uso de tus datos personales en relación con este sitio web están 
+                    sujetos a nuestra Política de Privacidad. Al utilizar nuestro sitio web, aceptas el 
+                    procesamiento de tus datos personales de acuerdo con nuestra Política de Privacidad.
+
+                  <Typography gutterBottom>
+                  4. Limitación de Responsabilidad
+                  </Typography>
+                    4.1.En la medida permitida por la ley aplicable, excluimos todas las garantías y condiciones 
+                    relacionadas con nuestro sitio web y su contenido. No seremos responsables de ningún daño 
+                    directo, indirecto, incidental, especial o consecuente que surja del uso de este sitio web.
+
+                  <Typography gutterBottom>
+                  5. Modificaciones de los Términos y Condiciones
+                  </Typography>
+                    5.1.Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. 
+                    Los cambios serán efectivos tan pronto como se publiquen en este sitio web. Te recomendamos 
+                    que revises regularmente estos términos y condiciones para estar al tanto de cualquier cambio.
+
+                  </Typography>
+            </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleDisagree} color="primary">Disagree</Button>
+                  <Button onClick={handleAgree} color="primary" autoFocus>
+                    Agree
+                  </Button>
+                </DialogActions>
+              </Dialog>
+              {userDecision && <p>You chose: {userDecision}</p>}
             </Grid>
+            
+            <Snackbar
+              open={openSnackbar}
+              autoHideDuration={6000}
+              onClose={handleCloseSnackbar}
+              // message="Note archived"
+            >
+              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                Differents passwords!
+              </Alert>
+            </Snackbar>
             <Button
               type="submit"
               fullWidth
