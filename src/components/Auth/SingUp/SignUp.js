@@ -63,6 +63,13 @@ export const SignUp = () =>  {
       password: data.get('password'),
     });
 
+    const data2 = {
+      name: "Juan",
+      lastname: "Perez",
+      email: data.get('email'),
+      password: data.get('password'),
+    };
+
     if (data.get('password') !== data.get('repeatPassword')) {
       // Mostrar un Snackbar si las contraseñas no coinciden
       setOpenSnackbar(true);
@@ -70,6 +77,14 @@ export const SignUp = () =>  {
       // Aquí puedes enviar los datos del formulario si las contraseñas coinciden
       // Por ejemplo, puedes hacer una solicitud HTTP para registrar al usuario
       console.log('Contraseñas coinciden, puedes enviar el formulario.');
+    }
+
+    console.log(data2);
+    try {
+      const response = await auth.signUp(data2);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
     }
 
   };

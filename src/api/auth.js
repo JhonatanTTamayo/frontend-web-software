@@ -1,10 +1,11 @@
 import { ENV } from "../utils";
 const { SERVER_IP, API_ROUTES } = ENV;
 
+
 export class Auth {
   // Registro
-  signup = async (data) => {
-    const response = await fetch(`${SERVER_IP}${API_ROUTES.AUTH}`, {
+  async signUp(data){
+    const response = await fetch(`${ENV.BASE_API_URL}${API_ROUTES.AUTH}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,5 +42,6 @@ export class Auth {
       throw error;
     }
   };
-  // Obtener usuario logueado
+  
+  
 }
