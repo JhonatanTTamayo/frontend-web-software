@@ -3,8 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -25,6 +24,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import Alert  from '@mui/material/Alert';
 import { useState } from 'react';
+
+// import { Login } from '../Login/Login';
 
 // Función para validar el correo electrónico y el dominio
 const validateEmail = (email) => {
@@ -52,8 +53,12 @@ const defaultTheme  = createTheme();
 
 export const SignUp = () =>  {
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+
+
 
   const [userDecision, setUserDecision] = useState(null);
   const auth = new Auth();
@@ -78,6 +83,7 @@ export const SignUp = () =>  {
       // Mostrar un Snackbar si las contraseñas no coinciden
       setErrorMessage('Las contraseñas no coinciden');
       setOpenSnackbar(true);
+      return;
     } else {
       // Aquí puedes enviar los datos del formulario si las contraseñas coinciden
       // Por ejemplo, puedes hacer una solicitud HTTP para registrar al usuario
@@ -95,11 +101,20 @@ export const SignUp = () =>  {
     try {
       const response = await auth.signUp(data2);
       console.log(response);
+      if (response.status === 201) {
+        // La solicitud se completó correctamente, establecer el estado de redirección
+        setRegistrationSuccess(true);
+      }
     } catch (error) {
       console.log(error);
     }
 
   };
+
+  if (registrationSuccess) {
+    window.location.href = '/login?registrationSuccess=true';
+  }
+
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -116,6 +131,13 @@ export const SignUp = () =>  {
     setOpenSnackbar(false);
   };  
 
+  // const handleCloseSnackbar2 = (event, reason) => {
+  //   if (reason === 'clickaway') {
+  //     return;
+  //   }
+  //   setOpenSnackbar(false);
+  // }; 
+
   const handleAgree = () => {
     setUserDecision('agree');
     setOpen(false);
@@ -126,12 +148,13 @@ export const SignUp = () =>  {
     setOpen(false);
   };
 
-  const documentTypeOptions = [
-    { value: "CC", label: "Cédula de ciudadanía" },
-    { value: "CE", label: "Cédula extranjera" },
-    { value: "TI", label: "Tarjeta de identidad" },
-    { value: "Pasaporte", label: "Pasaporte" },
-  ];
+
+  // const documentTypeOptions = [
+  //   { value: "CC", label: "Cédula de ciudadanía" },
+  //   { value: "CE", label: "Cédula extranjera" },
+  //   { value: "TI", label: "Tarjeta de identidad" },
+  //   { value: "Pasaporte", label: "Pasaporte" },
+  // ];
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -312,6 +335,7 @@ export const SignUp = () =>  {
           </Box>
         </Box>
         <Copyright sx={{ mt: 5 }} />
+        
       </Container>
     </ThemeProvider>
   );

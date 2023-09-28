@@ -1,7 +1,7 @@
 import React from "react";
 import { SignUp } from "../../../components/Auth/SingUp/SignUp";
-import { Politics } from "../../../components/Others/Politics"
-export const WebHome = () => {
+
+const WebHome = () => {
   return (
     <>
       <div>WebHome</div>
@@ -10,3 +10,5 @@ export const WebHome = () => {
     </>
   );
 };
+
+export default WebHome;
