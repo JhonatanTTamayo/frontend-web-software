@@ -26,10 +26,13 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert  from '@mui/material/Alert';
 import { useState } from 'react';
 
-// Función para validar el correo electrónico
+// Función para validar el correo electrónico y el dominio
 const validateEmail = (email) => {
   const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email);
+  const domain = email.substring(email.lastIndexOf("@") +1);
+  const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'autonoma.edu.co']; // Agrega los dominios permitidos aquí
+
+  return re.test(email) && allowedDomains.includes(domain);
 };
 
 function Copyright(props) {
@@ -66,6 +69,7 @@ export const SignUp = () =>  {
     if (!validateEmail(email)) {
       // Mostrar un Snackbar si el correo electrónico no es válido
       setErrorMessage('El correo electrónico no es válido');
+      setErrorMessage('Ingrese un correo con caracteres validos');
       setOpenSnackbar(true);
       return;
     }
