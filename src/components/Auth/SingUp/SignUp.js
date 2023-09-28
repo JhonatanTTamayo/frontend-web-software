@@ -1,128 +1,342 @@
-import React, { useEffect, useState } from "react";
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Auth } from "../../../api/auth";
-import {
-  Autocomplete,
-  IconButton,
-  InputAdornment,
-  OutlinedInput,
-  TextField,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import "./SignUp.scss";
 
-export const SignUp = () => {
+//Dialog
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
+// Toast
+import Snackbar from '@mui/material/Snackbar';
+import Alert  from '@mui/material/Alert';
+import { useState } from 'react';
+
+// import { Login } from '../Login/Login';
+
+// Función para validar el correo electrónico y el dominio
+const validateEmail = (email) => {
+  const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const domain = email.substring(email.lastIndexOf("@") +1);
+  const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'autonoma.edu.co']; // Agrega los dominios permitidos aquí
+
+  return re.test(email) && allowedDomains.includes(domain);
+};
+
+function Copyright(props) {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+      {'Copyright © '}
+      <Link color="inherit" href="">
+        UAM
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+const defaultTheme  = createTheme();
+
+export const SignUp = () =>  {
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+
+
+
+  const [userDecision, setUserDecision] = useState(null);
   const auth = new Auth();
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
-  //   useEffect se ejecuta 1 sola vez cuando se cargue el componente
-  useEffect(() => {
-    console.log("signup");
-  }, []);
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = (event) => {
+  // Enviar los datos del formulario  
+  const handleSubmit = async (event) => {
     event.preventDefault();
-  };
+    const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
+    const repeatPassword = data.get('repeatPassword');
 
-  const handleSetFirstname = (event) => {
-    setFirstname(event.target.value);
-  };
+    if (!validateEmail(email)) {
+      // Mostrar un Snackbar si el correo electrónico no es válido
+      setErrorMessage('El correo electrónico no es válido');
+      setErrorMessage('Ingrese un correo con caracteres validos');
+      setOpenSnackbar(true);
+      return;
+    }
 
-  const handleSetLastname = (event) => {
-    setLastname(event.target.value);
-  };
+    if (password !== repeatPassword) {
+      // Mostrar un Snackbar si las contraseñas no coinciden
+      setErrorMessage('Las contraseñas no coinciden');
+      setOpenSnackbar(true);
+      return;
+    } else {
+      // Aquí puedes enviar los datos del formulario si las contraseñas coinciden
+      // Por ejemplo, puedes hacer una solicitud HTTP para registrar al usuario
+      console.log('Contraseñas coinciden, puedes enviar el formulario.');
+    }
 
-  const handleSave = async () => {
-    const data = {
-      firstname: firstname,
-      lastname: lastname,
-      email,
-      currentPassword,
+    const data2 = {
+      name: "Juan",
+      lastname: "Perez",
+      email: email,
+      password: password,
     };
-    console.log(data);
+
+    console.log(data2);
     try {
-      const response = await auth.signUp(data);
+      const response = await auth.signUp(data2);
       console.log(response);
+      if (response.status === 201) {
+        // La solicitud se completó correctamente, establecer el estado de redirección
+        setRegistrationSuccess(true);
+      }
     } catch (error) {
       console.log(error);
     }
+
   };
 
-  const documentTypeOptions = [
-    { value: "CC", label: "Cédula de ciudadanía" },
-    { value: "CE", label: "Cédula extranjera" },
-    { value: "TI", label: "Tarjeta de identidad" },
-    { value: "Pasaporte", label: "Pasaporte" },
-  ];
+  if (registrationSuccess) {
+    window.location.href = '/login?registrationSuccess=true';
+  }
+
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };  
+
+  // const handleCloseSnackbar2 = (event, reason) => {
+  //   if (reason === 'clickaway') {
+  //     return;
+  //   }
+  //   setOpenSnackbar(false);
+  // }; 
+
+  const handleAgree = () => {
+    setUserDecision('agree');
+    setOpen(false);
+  };
+
+  const handleDisagree = () => {
+    setUserDecision('disagree');
+    setOpen(false);
+  };
+
+
+  // const documentTypeOptions = [
+  //   { value: "CC", label: "Cédula de ciudadanía" },
+  //   { value: "CE", label: "Cédula extranjera" },
+  //   { value: "TI", label: "Tarjeta de identidad" },
+  //   { value: "Pasaporte", label: "Pasaporte" },
+  // ];
 
   return (
-    <>
-      <div>
-        <h2>SignUp</h2>
-        <div className="auth-container">
-          <form>
-            <div className="auth-form">
-              <div className="auth-form__row">
+    <ThemeProvider theme={defaultTheme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign up
+          </Typography>
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+            <Grid container spacing={2}>
+              
+            <Grid item xs={12}>
                 <TextField
-                  className="input-auth-form"
-                  id="firstname"
-                  value={firstname}
-                  label="Firstname"
-                  variant="standard"
-                  onChange={handleSetFirstname}
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
                 />
+              </Grid>
+              <Grid item xs={12}>
                 <TextField
-                  className="input-auth-form"
-                  id="lastname"
-                  value={lastname}
-                  label="Lastname"
-                  variant="standard"
-                  onChange={handleSetLastname}
-                />
-              </div>
-              <div className="auth-form__row">
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  options={documentTypeOptions}
-                  sx={{ width: 300 }}
-                  // open={false}
-                  renderInput={(params) => (
-                    <TextField {...params} label="DocumentType" />
-                  )}
-                />
-              </div>
-              <div className="auth-form__row">
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={showPassword ? "text" : "password"}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
+                  required
+                  fullWidth
+                  name="password"
                   label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                  // value={password}
+                  // onChange={(e) => setPassword(e.target.value)}
                 />
-              </div>
-            </div>
-          </form>
-          <button onClick={handleSave}>Enviar</button>
-        </div>
-      </div>
-    </>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="repeatPassword"
+                  label="Repeat Password"
+                  type="password"
+                  id="repeatPassword"
+                  autoComplete="new-password"
+                  // value={repeatPassword}
+                  // onChange={(e) => setRepeatPassword(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+              <Grid item>
+                <Link href="#" variant="body2" onClick = {handleClickOpen}>
+                  Términos y condiciones
+                </Link>
+              </Grid>
+  
+              </Grid>
+              {/* Dialog */}
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"Términos y Condiciones de Uso"}
+                </DialogTitle>
+                <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+              
+                  <Typography gutterBottom>
+                    Por favor, lee detenidamente los siguientes términos y condiciones 
+                    antes de utilizar nuestro sitio web. Al acceder y utilizar este sitio web, 
+                    aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con 
+                    alguno de los siguientes puntos, te recomendamos que no utilices nuestro sitio web.
+                  </Typography>
+
+                  <Typography gutterBottom>
+                    1. Uso del Sitio Web 
+                  </Typography>
+                    El contenido de este sitio web es únicamente para información general y 
+                    puede estar sujeto a cambios sin previo aviso. No garantizamos la exactitud, 
+                    integridad o actualidad de la información proporcionada en este sitio web.
+
+                    <Typography gutterBottom>
+                    1.1 El uso de cualquier información o material en este sitio web es bajo tu propio riesgo. 
+                    Es tu responsabilidad asegurarte de que cualquier producto, servicio o información disponible 
+                    a través de este sitio web cumpla con tus requisitos específicos.
+                    </Typography>
+                  <Typography gutterBottom>
+                    1.2 Este sitio web puede contener enlaces a otros sitios web que no están bajo nuestro control. 
+                    No tenemos control sobre la naturaleza, el contenido y la disponibilidad de esos sitios. 
+                    La inclusión de cualquier enlace no implica necesariamente una recomendación o respaldo 
+                    de los puntos de vista expresados en ellos.
+                  </Typography>
+
+                  <Typography gutterBottom>
+                  2. Propiedad intelectual
+                  </Typography>
+                    2.1. Todos los derechos de propiedad intelectual en relación con este sitio web y su contenido
+                    (incluyendo, pero no limitado a, texto, gráficos, logotipos, imágenes y software) 
+                    son propiedad de SENNOVALAB o de nuestros licenciantes. Estos están protegidos por 
+                    las leyes de propiedad intelectual aplicables.
+
+                  <Typography gutterBottom>
+                    2.2. Está prohibida cualquier reproducción, distribución, modificación o uso no autorizado del 
+                    contenido de este sitio web sin nuestro consentimiento previo por escrito.
+                    Está prohibida cualquier reproducción, distribución, modificación o uso no autorizado 
+                    del contenido de este sitio web sin nuestro consentimiento previo por escrito.
+
+                  <Typography gutterBottom>
+                  3. Privacidad y Protección de Datos
+                  </Typography>
+                    3.1.La recopilación y el uso de tus datos personales en relación con este sitio web están 
+                    sujetos a nuestra Política de Privacidad. Al utilizar nuestro sitio web, aceptas el 
+                    procesamiento de tus datos personales de acuerdo con nuestra Política de Privacidad.
+
+                  <Typography gutterBottom>
+                  4. Limitación de Responsabilidad
+                  </Typography>
+                    4.1.En la medida permitida por la ley aplicable, excluimos todas las garantías y condiciones 
+                    relacionadas con nuestro sitio web y su contenido. No seremos responsables de ningún daño 
+                    directo, indirecto, incidental, especial o consecuente que surja del uso de este sitio web.
+
+                  <Typography gutterBottom>
+                  5. Modificaciones de los Términos y Condiciones
+                  </Typography>
+                    5.1.Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. 
+                    Los cambios serán efectivos tan pronto como se publiquen en este sitio web. Te recomendamos 
+                    que revises regularmente estos términos y condiciones para estar al tanto de cualquier cambio.
+
+                  </Typography>
+            </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleDisagree} color="primary">Disagree</Button>
+                  <Button onClick={handleAgree} color="primary" autoFocus>
+                    Agree
+                  </Button>
+                </DialogActions>
+              </Dialog>
+              {userDecision && <p>You chose: {userDecision}</p>}
+            </Grid>
+            
+            <Snackbar
+              open={openSnackbar}
+              autoHideDuration={6000}
+              onClose={handleCloseSnackbar}
+            >
+              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                {errorMessage}
+              </Alert>
+            </Snackbar>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign Up
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="#" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+        <Copyright sx={{ mt: 5 }} />
+        
+      </Container>
+    </ThemeProvider>
   );
-};
+}
