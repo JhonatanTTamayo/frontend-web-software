@@ -26,9 +26,11 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert  from '@mui/material/Alert';
 import { useState } from 'react';
 
-// function Alert(props) {
-//   return <MuiAlert elevation={6} variant="filled" {...props} />;
-// }
+// Función para validar el correo electrónico
+const validateEmail = (email) => {
+  const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+};
 
 function Copyright(props) {
   return (
@@ -46,10 +48,9 @@ function Copyright(props) {
 const defaultTheme  = createTheme();
 
 export const SignUp = () =>  {
-  // const [password, setPassword] = useState('');
-  // const [repeatPassword, setRepeatPassword] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [userDecision, setUserDecision] = useState(null);
   const auth = new Auth();
@@ -58,26 +59,33 @@ export const SignUp = () =>  {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const email = data.get('email');
+    const password = data.get('password');
+    const repeatPassword = data.get('repeatPassword');
 
-    const data2 = {
-      name: "Juan",
-      lastname: "Perez",
-      email: data.get('email'),
-      password: data.get('password'),
-    };
+    if (!validateEmail(email)) {
+      // Mostrar un Snackbar si el correo electrónico no es válido
+      setErrorMessage('El correo electrónico no es válido');
+      setOpenSnackbar(true);
+      return;
+    }
 
-    if (data.get('password') !== data.get('repeatPassword')) {
+    if (password !== repeatPassword) {
       // Mostrar un Snackbar si las contraseñas no coinciden
+      setErrorMessage('Las contraseñas no coinciden');
       setOpenSnackbar(true);
     } else {
       // Aquí puedes enviar los datos del formulario si las contraseñas coinciden
       // Por ejemplo, puedes hacer una solicitud HTTP para registrar al usuario
       console.log('Contraseñas coinciden, puedes enviar el formulario.');
     }
+
+    const data2 = {
+      name: "Juan",
+      lastname: "Perez",
+      email: email,
+      password: password,
+    };
 
     console.log(data2);
     try {
@@ -277,10 +285,9 @@ export const SignUp = () =>  {
               open={openSnackbar}
               autoHideDuration={6000}
               onClose={handleCloseSnackbar}
-              // message="Note archived"
             >
               <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                Differents passwords!
+                {errorMessage}
               </Alert>
             </Snackbar>
             <Button
@@ -305,5 +312,3 @@ export const SignUp = () =>  {
     </ThemeProvider>
   );
 }
-
-
