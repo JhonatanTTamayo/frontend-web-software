@@ -1,25 +1,28 @@
-import {React} from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route} from "react-router-dom";
-import WebHome from "./pages/guest/WebHome/WebHome";
-import WebLogin from "./pages/user/WebLogin";
-import Layout from "./pages/general/Layout";
-
+import { React } from "react";
+import { Routes, Route} from "react-router-dom";
+import SignUpPage from "./pages/guest/SignUp/SignUpPage";
+import LoginPage from "./pages/guest/Login/LoginPage";
+import LayoutPage from "./pages/general/Layout/LayoutPage";
+import "./App.scss";
 
 export default function App() {
 
   return (
-    <BrowserRouter>
+    <div className="App">
+      <div className="App-header">
+        <h1>App v1</h1>
+      </div>
+
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<WebHome />} />
-          <Route path="login" element={<WebLogin />} />
+          <Route path="/" element={<LayoutPage />}>
+          <Route path="signup" element={<SignUpPage />} />
+          <Route path="login" element={<LoginPage />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+
+      
+
+    </div>
   );
 }
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
 

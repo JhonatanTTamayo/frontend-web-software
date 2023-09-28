@@ -1,14 +1,14 @@
 import React from "react";
 import { SignUp } from "../../../components/Auth/SingUp/SignUp";
 
-const WebHome = () => {
+const SignUpPage = () => {
   return (
     <>
-      <div>WebHome</div>
+      <div>SignUp Page</div>
       <SignUp></SignUp>
       {/* <Politics></Politics> */}
     </>
   );
 };
 
-export default WebHome;
+export default SignUpPage;
