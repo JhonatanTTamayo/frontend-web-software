@@ -1,21 +1,30 @@
-.Links{
+/* Estilos para los enlaces como botones */
+.Links {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-content: center;
-  width: 100%;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-size: 14;
+  align-items: center;
+  justify-content: center; /* Centra horizontalmente los elementos */
+  list-style: none; /* Quita el punto de la lista */
+  padding: 0; /* Elimina el relleno predeterminado de la lista */
 }
 
-.Links li{
-  padding: 5px;
+.Links li {
+  margin: 1cm 3cm; /* Espacio de 1 cm arriba y a los lados de cada enlace */
+}
+
+.Links a {
+  display: inline-block;
+  padding: 15px 30px;
   font-weight: bold;
-  color: #fff;
+  color: #fff; /* Color de texto blanco */
+  text-align: center;
   text-decoration: none;
-  width: 800px;
-  display: flex;
-  justify-content: center;
-
+  background-color: #0077B6; /* Color de fondo azul */
+  border-radius: 10px; /* Bordes redondeados */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Efecto de transición suave */
 }
+
+
+
+
+
 

@@ -1,20 +1,36 @@
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-
-.App-header {
-  margin: 0;
-  padding: 0;
-
-  background-color: #282c34;
-  min-height: 15vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  color: white;
-}
-
+/* Estilos para el contenedor principal */
+.App {
+    text-align: center;
+    background-color: #f0f0f0; /* Fondo gris claro */
+    padding: 20px;
+  }
+  
+  /* Estilos para el encabezado */
+  .App-header {
+    background-color: #007BFF; /* Fondo azul oscuro */
+    color: #fff; /* Color de texto blanco */
+    padding: 20px; /* Aumenté el padding para dar más espacio */
+    border-radius: 5px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Estilos para el título */
+  .App-header h1 {
+    font-size: 36px;
+    margin: 0;
+    padding: 10px;
+  }
+  
+  /* Estilos para los enlaces en la cabecera */
+  .App-header a {
+    color: #ffcc00; /* Color de texto amarillo */
+    text-decoration: none;
+    margin: 0 20px; /* Aumenté el margen para dar más espacio entre enlaces */
+    font-size: 18px;
+    transition: color 0.3s ease; /* Transición de color suave */
+  }
+  
+  
